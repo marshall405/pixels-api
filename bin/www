@@ -9,6 +9,10 @@ var debug = require('debug')('api:server');
 var http = require('http');
 const {save} = require('../db')
 
+
+const MongoClient = require('mongodb').MongoClient;
+const uri = process.env.DB_URI
+
 /**
  * Get port from environment and store in Express.
  */
@@ -23,12 +27,24 @@ app.set('port', port);
 var server = http.createServer(app);
 const io = require('socket.io')(server)
 
-io.on('connection', socket => {
-  socket.on('update', async (values) => {
-    io.emit('update', values)
-    save(values)
-  })
+io.on('connection', async socket => {
+  client = new MongoClient(uri, { useNewUrlParser: true }) 
+  await client.connect()
+  let pixels = await client.db("Canvas").collection("pixels")
+  
 
+  socket.on('update', (values) => {
+    io.emit('update', values)
+    pixels.updateOne({name:"root"}, {
+      $push: {
+        values: values
+      }
+    })
+  })
+  socket.on('disconnect', async () => {
+    await client.close()
+    console.log('disconnected')
+  })
 })
 
 /**
