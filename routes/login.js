@@ -10,7 +10,7 @@ const uri = process.env.DB_URI
 
 router.post('/', async function(req, res, next) {
   const {email, password} = req.body
-  
+  console.log('does this hit')
   client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true }) 
 
   let user;
