@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const {getPixels, savePixels} = require('../db')
+
 /* GET pixels */
 
 router.get('/', async function(req, res, next) {
