@@ -10,13 +10,12 @@ const uri = process.env.DB_URI
 
 router.post('/', async function(req, res, next) {
   const {email, password} = req.body
-  client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true }) 
-  console.log('client', client)
+  client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: false }) 
+
   let user;
 
   try {
     await client.connect()
-    console.log('connecting to db')
     let users = await client.db("Canvas").collection("users")
     if(req.headers.authorization){
       let decoded = jwt.decode(req.headers.authorization, JWT_SECRET)
